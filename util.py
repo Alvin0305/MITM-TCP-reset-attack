@@ -5,9 +5,9 @@ SERVER_PORT = 22
 
 STABILITY_TIME = 30
 
+
 def print_headers(ip, tcp):
     print("\n========== IP HEADER ==========")
-
     print(f"Version          : {ip.version}")
     print(f"IHL              : {ip.ihl}")
     print(f"TOS              : {ip.tos}")
@@ -22,7 +22,6 @@ def print_headers(ip, tcp):
     print(f"Destination      : {ip.dst}")
 
     print("\n========== TCP HEADER ==========")
-
     print(f"Source Port      : {tcp.sport}")
     print(f"Destination Port : {tcp.dport}")
     print(f"Sequence Number  : {tcp.seq}")
@@ -34,5 +33,4 @@ def print_headers(ip, tcp):
     print(f"Checksum         : {tcp.chksum}")
     print(f"Urgent Pointer   : {tcp.urgptr}")
     print(f"Options          : {tcp.options}")
-
     print("================================\n")
