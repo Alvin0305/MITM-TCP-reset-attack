@@ -1,14 +1,14 @@
 import subprocess
 
+from util import log
+
 
 def send_rst(source_ip, source_port, destination_ip, destination_port, seq, ack):
-    print("\n========== RST PACKET ==========")
-    print(f"Source      : {source_ip}:{source_port}")
-    print(f"Destination : {destination_ip}:{destination_port}")
-    print(f"SEQ         : {seq}")
-    print(f"ACK         : {ack}")
-    print("Flags       : RST + ACK")
-    print("================================")
+    log(
+        "RST",
+        f"{source_ip}:{source_port} -> {destination_ip}:{destination_port}  "
+        f"seq={seq} ack={ack}  flags=RST+ACK",
+    )
 
     command = [
         "hping3",
@@ -23,31 +23,21 @@ def send_rst(source_ip, source_port, destination_ip, destination_port, seq, ack)
         "--setseq",
         str(seq),
         "--setack",
-        str(ack),  # <-- critical: set ACK number
+        str(ack),
         "--rst",
-        "--ack",  # <-- critical: set ACK flag
+        "--ack",
         destination_ip,
     ]
-
-    print("\n[+] Executing hping3...")
-    print("[+] Command: ", " ".join(command))
+    log("RST", "exec: " + " ".join(command))
 
     try:
-        result = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            check=False,  # don't throw; hping3 often exits non-zero
-        )
+        result = subprocess.run(command, capture_output=True, text=True, check=False)
     except FileNotFoundError:
-        print("[!] hping3 not found. Install it first (sudo apt install hping3).")
+        log("RST", "hping3 not found (sudo apt install hping3)")
         return
 
-    print("\n========== HPING3 OUTPUT ==========")
-    print(result.stdout or "(no stdout)")
-
+    if result.stdout:
+        log("RST", f"stdout:\n{result.stdout}")
     if result.stderr:
-        print("[stderr]", result.stderr)
-
-    print(f"[+] hping3 return code: {result.returncode}")
-    print("====================================")
+        log("RST", f"stderr:\n{result.stderr}")
+    log("RST", f"exit code = {result.returncode}")

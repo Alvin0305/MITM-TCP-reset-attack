@@ -3,7 +3,16 @@ SERVER_IP = "192.168.2.3"
 
 SERVER_PORT = 22
 
-STABILITY_TIME = 30
+# --- tunables ---------------------------------------------------------
+STABILITY_TIME = 30  # seconds of idle before RST injection
+IFACE = "enp0s8"  # sniff interface (set per environment)
+
+HEARTBEAT_INTERVAL = 5  # seconds between heartbeat logs
+
+
+def log(tag, msg):
+    """Unbuffered, thread-safe-ish log line."""
+    print(f"[{tag}] {msg}", flush=True)
 
 
 def print_headers(ip, tcp):
